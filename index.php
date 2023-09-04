@@ -80,7 +80,7 @@
         <label for="usage_report">GitHub Usage Report</label>
     </p>
     <p>
-        <input type="file" name="usage_report" />
+        <input type="file" name="usage_report" id="usage_report" />
     </p>
     <p><input type="submit" value="Analyze"></p>
 </form>
