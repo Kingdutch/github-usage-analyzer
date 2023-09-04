@@ -45,6 +45,9 @@
         .results .table table {
             border-spacing: 1rem .2rem;
         }
+        .results .table table th {
+            cursor: pointer;
+        }
         .results .column[data-title='Cost ($)'],
         .results .column[data-title='Minutes'] {
             text-align: right;
@@ -325,6 +328,12 @@ elseif ($result === FALSE) {
 
 ?>
 <script type="text/javascript">
+    /**
+     * @block
+     * Provides functionality to toggle different tables on- and off.
+     *
+     * Allows a user to hide a noisy table they're not interested in right now.
+     */
     function toggleTable () {
         console.log(this);
         for (const table of document.querySelectorAll(`.results .table[data-title='${this.value}']`)) {
@@ -340,6 +349,28 @@ elseif ($result === FALSE) {
       toggleTable.apply(toggle);
       toggle.addEventListener('change', toggleTable);
     }
+
+    /**
+     * @block
+     * Adds on-click sorting to the table headers.
+     */
+    // Get the text value of a cell.
+    const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+    // Compare one table cell to another and return the neede value for a sort
+    // function.
+    const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+        v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+    )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+    // Add an event listener to all the header cells and when clicked, sort all
+    // the rows except for the header based on the row's value.
+    document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+      const table = th.closest('table').querySelector('tbody');
+      Array.from(table.querySelectorAll('tr'))
+        .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+        .forEach(tr => table.appendChild(tr) );
+    })));
 </script>
 </body>
 </html>
