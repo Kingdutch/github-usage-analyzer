@@ -17,7 +17,7 @@
             font-size: 1.75rem;
             margin: 1rem 1rem;
         }
-        .range .date {
+        .nowrap {
             white-space: nowrap;
         }
         .toggles {
@@ -109,6 +109,7 @@ function reduce_by_column(string $column, string $label) {
                 $label => $field,
                 'Minutes' => 0,
                 'Cost ($)' => 0,
+                '# Runs' => 0,
                 'Repositories' => [],
             ];
         }
@@ -119,6 +120,7 @@ function reduce_by_column(string $column, string $label) {
 
         $carry[$field]['Minutes'] += $row['amount'];
         $carry[$field]['Cost ($)'] += $row['amount'] * $row['unit_price_dollar'];
+        $carry[$field]['# Runs']++;
         $carry[$field]['Repositories'][] = $row['repository'];
 
         return $carry;
@@ -262,11 +264,12 @@ $output = ob_get_clean();
 assert($output !== FALSE, "Output buffering as not started. Forgot to call ob_start.");
 
 if (is_array($result)) {
+    $total_runs = array_sum(array_column($result['Per Workflow'], '# Runs'));
     $days = array_keys($result['Per Day']);
     $to = date("l jS F Y", strtotime(end($days)));
     $from = date("l jS F Y", strtotime(reset($days)));
 
-    echo "<h1 class='range'><span class='date'>$from</span> to <span class='date'>$to</span></h1>";
+    echo "<h1 class='range'><span class='nowrap'>$from</span> to <span class='nowrap'>$to</span> <span class='nowrap'>($total_runs runs)</span></h1>";
     ?>
     <div class="toggles">
         <?php
