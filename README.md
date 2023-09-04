@@ -11,4 +11,6 @@ your browser.
 php -S localhost:8000
 ```
 
+![The default screen after opening which asks you to upload a file.](example.png)
+
 Upload a CSV usage report created by GitHub.
